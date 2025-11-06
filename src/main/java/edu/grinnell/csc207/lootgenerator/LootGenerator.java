@@ -9,6 +9,7 @@ public class LootGenerator {
     /** The path to the dataset (either the small or large set). */
     private static final String DATA_SET = "data/small";
     private static ArrayList <monster>monstList = new ArrayList<monster>();
+    private static ArrayList <treasure>tresList = new ArrayList<treasure>();
 
 
     public static class monster {
@@ -25,19 +26,22 @@ public class LootGenerator {
         public monster (){
         }
     }
-    // public void toMonster (String line){
-    //     char [] Class = new char [20];
-    //     char [] Type = new char [20];
-    //     char [] Level = new char [20];
-    //     char [] TreasureClass = new char [20];
-    //     for (int i = 0; i < line.length (); i++){
-    //         while (line.charAt (i) != ('\t')){
-    //             int j = 0;
-    //             Class [j]= line.charAt (i);
-    //             j++;
-    //         }
-    //     }
-    // }
+
+    public static class treasure {
+        private String TreasureClass;
+        private String Item1;
+        private String Item2;
+        private String Item3;
+        public treasure (String TreasureClass, String Item1, String Item2, String Item3){
+            this.TreasureClass = TreasureClass;
+            this.Item1= Item1;
+            this.Item2 = Item2;
+            this.Item3 = Item3;
+        }
+        public treasure (){
+        }
+    }
+
     public static void fillMonster () throws FileNotFoundException{
         Scanner scan = new Scanner (new File ("data/large/monstats.txt"));
 
@@ -63,10 +67,30 @@ public class LootGenerator {
         return monstList.get (random);
 
     }
+
+
+    public static void fillTreasure () throws FileNotFoundException{
+        Scanner scan = new Scanner (new File ("data/large/TreasureClassEx.txt")).useDelimiter("\t");
+
+        while (scan.hasNext ()){
+            treasure tres = new treasure ();
+            tres.TreasureClass = scan.next ();
+            tres.Item1 = scan.next ();
+            tres.Item2 = scan.next ();
+            tres.Item3 = scan.nextLine ();   
+            tresList.add (tres);
+        }
+
+
+        scan.close ();
+    }
     
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("This program kills monsters and generates loot!");
         fillMonster ();
         System.out.println (pickMonster ());
+        System.out.println (monstList.get (13).TreasureClass);
+        fillTreasure ();
+        System.out.println (tresList.get (17).Item3);
     }
 }
