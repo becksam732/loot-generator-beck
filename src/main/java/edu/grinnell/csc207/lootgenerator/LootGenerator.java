@@ -78,32 +78,35 @@ public class LootGenerator {
         scan.close ();
     }
 
-    public static String fetchTreasureClass (){
-        treasure temp = new treasure();
+    public treasure fetchTreasureClass(){
+        for(int i = 0; i < tresList.size(); i++){
+            String tr = pickMonster().TreasureClass;
+            if(tresList.get(i).TreasureClass.equals(tr)){
+                return tresList.get(i);
+            }
+        } return new treasure();
+    }
+
+
+    public String generateBaseItem (){
+        treasure temp = fetchTreasureClass();
         String Item = temp.Item1;
         while(!Item.substring(0,3).equals("armo")){
             String tr = pickMonster().TreasureClass;
-            for(int i = 0; i < tresList.size(); i++){
-                if(tresList.get(i).TreasureClass.equals(tr)){
-                    Random rand = new Random ();
-                    int random = 1 + rand.nextInt (3);
-                    if(random == 1){
-                        Item = tresList.get(i).Item1;
-                        tr = tresList.get(i).Item1;
-                        i = 0;
-                    } else if(random == 2){
-                        Item = tresList.get(i).Item2;
-                        tr = tresList.get(i).Item2;
-                        i = 0;
-                    } else if(random == 3){
-                        Item = tresList.get(i).Item3;
-                        tr = tresList.get(i).Item3;
-                        i = 0;
-                    }
-                }
-            } 
+            Random rand = new Random ();
+            int random = 1 + rand.nextInt (3);
+            if(random == 1){
+                Item = tresList.get(i).Item1;
+                tr = tresList.get(i).Item1;
+            } else if(random == 2){
+                Item = tresList.get(i).Item2;
+                tr = tresList.get(i).Item2;
+            } else if(random == 3){
+                Item = tresList.get(i).Item3;
+                tr = tresList.get(i).Item3;
+            }
         }
-        return new treasure().Item1;
+        return Item;
     }
             
     
@@ -114,6 +117,6 @@ public class LootGenerator {
         //System.out.println (pickMonster ());
         //System.out.println (monstList.get (13).TreasureClass);
         System.out.println (tresList.get (13).TreasureClass);
-        System.out.println (fetchTreasureClass().Item1);
+        System.out.println (generateBaseItem());
     }
 }
