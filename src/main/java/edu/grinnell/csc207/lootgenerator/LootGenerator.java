@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 
 public class LootGenerator {
     /** The path to the dataset (either the small or large set). */
-    private static final String DATA_SET = "data/small";
+    private static final String DATA_SET = "data/large";
     private static ArrayList <monster>monstList = new ArrayList<monster>();
     private static ArrayList <treasure>tresList = new ArrayList<treasure>();
 
@@ -43,14 +43,14 @@ public class LootGenerator {
     }
 
     public static void fillMonster () throws FileNotFoundException{
-        Scanner scan = new Scanner (new File (DATA_SET + "/monstats.txt"));
+        Scanner scan = new Scanner (new File (DATA_SET + "/monstats.txt")).useDelimiter("\t");
 
         while (scan.hasNext ()){
             monster mon = new monster ();
-            mon.Class = scan.next ();
-            mon.Type = scan.next ();
-            mon.Level = scan.next ();
-            mon.TreasureClass = scan.nextLine ();   
+            mon.Class = scan.next ().trim();
+            mon.Type = scan.next ().trim();
+            mon.Level = scan.next ().trim();
+            mon.TreasureClass = scan.nextLine ().trim(); //  
             monstList.add (mon);
         }
         scan.close (); 
@@ -69,45 +69,49 @@ public class LootGenerator {
 
         while (scan.hasNext ()){
             treasure tres = new treasure ();
-            tres.TreasureClass = scan.next ();
-            tres.Item1 = scan.next ();
-            tres.Item2 = scan.next ();
-            tres.Item3 = scan.nextLine ();   
+            tres.TreasureClass = scan.next ().trim();
+            tres.Item1 = scan.next ().trim();
+            tres.Item2 = scan.next ().trim();
+            tres.Item3 = scan.nextLine ().trim();   
             tresList.add (tres);
         }
         scan.close ();
     }
 
-    public treasure fetchTreasureClass(){
+    public static treasure fetchTreasureClass(){
+        String tr = pickMonster().TreasureClass;
+        // String tr = "Act 2 Miss A";
         for(int i = 0; i < tresList.size(); i++){
-            String tr = pickMonster().TreasureClass;
+            System.out.print (i);
+            System.out.println (tresList.get (i).TreasureClass + ": " + tr);
             if(tresList.get(i).TreasureClass.equals(tr)){
+                System.out.println ("made it here");
                 return tresList.get(i);
             }
         } return new treasure();
     }
 
 
-    public String generateBaseItem (){
-        treasure temp = fetchTreasureClass();
-        String Item = temp.Item1;
-        while(!Item.substring(0,3).equals("armo")){
-            String tr = pickMonster().TreasureClass;
-            Random rand = new Random ();
-            int random = 1 + rand.nextInt (3);
-            if(random == 1){
-                Item = tresList.get(i).Item1;
-                tr = tresList.get(i).Item1;
-            } else if(random == 2){
-                Item = tresList.get(i).Item2;
-                tr = tresList.get(i).Item2;
-            } else if(random == 3){
-                Item = tresList.get(i).Item3;
-                tr = tresList.get(i).Item3;
-            }
-        }
-        return Item;
-    }
+    // public String generateBaseItem (){
+    //     treasure temp = fetchTreasureClass();
+    //     String Item = temp.Item1;
+    //     while(!Item.substring(0,3).equals("armo")){
+    //         String tr = pickMonster().TreasureClass;
+    //         Random rand = new Random ();
+    //         int random = 1 + rand.nextInt (3);
+    //         if(random == 1){
+    //             Item = tresList.get(i).Item1;
+    //             tr = tresList.get(i).Item1;
+    //         } else if(random == 2){
+    //             Item = tresList.get(i).Item2;
+    //             tr = tresList.get(i).Item2;
+    //         } else if(random == 3){
+    //             Item = tresList.get(i).Item3;
+    //             tr = tresList.get(i).Item3;
+    //         }
+    //     }
+    //     return Item;
+    // }
             
     
     public static void main(String[] args) throws FileNotFoundException {
@@ -116,7 +120,9 @@ public class LootGenerator {
         fillTreasure ();
         //System.out.println (pickMonster ());
         //System.out.println (monstList.get (13).TreasureClass);
-        System.out.println (tresList.get (13).TreasureClass);
-        System.out.println (generateBaseItem());
+        // System.out.println (tresList.get (5).TreasureClass);
+        treasure tr = fetchTreasureClass();
+        System.out.println (tr.TreasureClass + " " + tr.Item1 + " " + tr.Item2 + " " + tr.Item3);
+        // System.out.println (generateBaseItem());
     }
 }
