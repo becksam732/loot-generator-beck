@@ -78,40 +78,40 @@ public class LootGenerator {
         scan.close ();
     }
 
-    public static treasure fetchTreasureClass(){
+    public static treasure fetchTreasureClass(String tres){
         String tr = pickMonster().TreasureClass;
         // String tr = "Act 2 Miss A";
         for(int i = 0; i < tresList.size(); i++){
-            System.out.print (i);
-            System.out.println (tresList.get (i).TreasureClass + ": " + tr);
+            // System.out.print (i);
+            // System.out.println (tresList.get (i).TreasureClass + ": " + tr);
+            System.out.println (tr);
+            System.out.println (new treasure ().TreasureClass);
             if(tresList.get(i).TreasureClass.equals(tr)){
-                System.out.println ("made it here");
+                // System.out.println ("made it here");
                 return tresList.get(i);
             }
         } return new treasure();
     }
 
 
-    // public String generateBaseItem (){
-    //     treasure temp = fetchTreasureClass();
-    //     String Item = temp.Item1;
-    //     while(!Item.substring(0,3).equals("armo")){
-    //         String tr = pickMonster().TreasureClass;
-    //         Random rand = new Random ();
-    //         int random = 1 + rand.nextInt (3);
-    //         if(random == 1){
-    //             Item = tresList.get(i).Item1;
-    //             tr = tresList.get(i).Item1;
-    //         } else if(random == 2){
-    //             Item = tresList.get(i).Item2;
-    //             tr = tresList.get(i).Item2;
-    //         } else if(random == 3){
-    //             Item = tresList.get(i).Item3;
-    //             tr = tresList.get(i).Item3;
-    //         }
-    //     }
-    //     return Item;
-    // }
+    public static String generateBaseItem (){
+        treasure tr = fetchTreasureClass(pickMonster().TreasureClass);
+        String tempstring = "";
+        while(!tr.TreasureClass.equals(null)){  
+            Random rand = new Random ();
+            int random = 1 + rand.nextInt (3);
+            if(random == 1){
+                tempstring = tr.Item1;
+                tr = fetchTreasureClass(tr.Item1);
+            } else if(random == 2){
+                tempstring = tr.Item2;
+                tr = fetchTreasureClass(tr.Item2);
+            } else if(random == 3){
+                tempstring = tr.Item3;
+                tr = fetchTreasureClass(tr.Item3);
+            }
+        } return tempstring;
+    }
             
     
     public static void main(String[] args) throws FileNotFoundException {
@@ -121,8 +121,10 @@ public class LootGenerator {
         //System.out.println (pickMonster ());
         //System.out.println (monstList.get (13).TreasureClass);
         // System.out.println (tresList.get (5).TreasureClass);
-        treasure tr = fetchTreasureClass();
-        System.out.println (tr.TreasureClass + " " + tr.Item1 + " " + tr.Item2 + " " + tr.Item3);
-        // System.out.println (generateBaseItem());
+        treasure tr = fetchTreasureClass(pickMonster().TreasureClass);
+        // System.out.println (tr.TreasureClass + " " + tr.Item1 + " " + tr.Item2 + " " + tr.Item3);
+
+        // System.out.println (generateBaseItem ());
+        System.out.println (generateBaseItem());
     }
 }
