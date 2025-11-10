@@ -11,7 +11,26 @@ public class LootGenerator {
     private static ArrayList <monster>monstList = new ArrayList<monster>();
     private static ArrayList <treasure>tresList = new ArrayList<treasure>();
     private static ArrayList <armor>armList = new ArrayList<armor>();
+    private static ArrayList <magic>preList = new ArrayList<magic>();
+    private static ArrayList <magic>sufList = new ArrayList<magic>();
 
+
+
+    public static class magic {
+        private String Name;
+        private String mod1code;
+        private String mod1min;
+        private String mod1max;
+        public magic (String Name, String mod1code, String mod1min, String mod1max){
+            this.Name = Name;
+            this.mod1code = mod1code;
+            this.mod1min = mod1min;
+            this.mod1max = mod1max;
+        }
+        public magic (){
+
+        }
+    }
 
     public static class monster {
         private String Class;
@@ -56,6 +75,34 @@ public class LootGenerator {
         }
     }
 
+    public static void fillPrefix () throws FileNotFoundException{
+        Scanner scan = new Scanner (new File (DATA_SET + "/MagicPrefix.txt")).useDelimiter("\t");
+
+        while (scan.hasNext ()){
+            magic pre = new magic ();
+            pre.Name = scan.next ().trim();
+            pre.mod1code = scan.next ().trim();
+            pre.mod1min = scan.next ().trim();
+            pre.mod1max = scan.nextLine ().trim();  
+            preList.add (pre);
+        }
+        scan.close (); 
+    }
+
+    public static void fillSuffix () throws FileNotFoundException{
+        Scanner scan = new Scanner (new File (DATA_SET + "/MagicSuffix.txt")).useDelimiter("\t");
+
+        while (scan.hasNext ()){
+            magic suf = new magic ();
+            suf.Name = scan.next ().trim();
+            suf.mod1code = scan.next ().trim();
+            suf.mod1min = scan.next ().trim();
+            suf.mod1max = scan.nextLine ().trim();  
+            sufList.add (suf);
+        }
+        scan.close (); 
+    }
+
     public static void fillArmor () throws FileNotFoundException{
         Scanner scan = new Scanner (new File (DATA_SET + "/armor.txt")).useDelimiter("\t");
 
@@ -86,7 +133,11 @@ public class LootGenerator {
     public static monster pickMonster (){
         Random rand = new Random ();
         int random = rand.nextInt (monstList.size ());
-        return monstList.get (random);
+        monster mon = monstList.get (random);
+        System.out.println ("Figting " + mon.Type);
+        System.out.println("You have slain " + mon.Type);
+        System.out.println(mon.Type + " dropped:\n");
+        return mon;
 
     }
 
@@ -161,23 +212,114 @@ public class LootGenerator {
         } return -1;
     }
 
+    public static void generateAffix (){
+        String firstLine = "";
+        String secondLine = "";
+        String thirdLine = "";
+        boolean preEmpty = true;
+        boolean sufEmpty = true;
+
+        Random newRand = new Random ();
+        int run = newRand.nextInt (1);
+        if (run == 1){
+        }
+        else{
+            Random rand = new Random ();
+            int random = rand.nextInt (preList.size ());
+            magic mg = preList.get(random);
+
+            Random stats = new Random ();
+            int statRand;
+            if (mg.mod1min.equals (mg.mod1max)){
+                statRand = Integer.parseInt (mg.mod1min);
+            }
+            else{
+                statRand = stats.nextInt (Integer.parseInt (mg.mod1min),Integer.parseInt (mg.mod1max));
+            }
+            firstLine += mg.Name;
+            secondLine += statRand + " " + mg.mod1code;
+            preEmpty = false;
+
+        }
+        firstLine += " " + generateBaseItem ();
+        Random secondRand= new Random ();
+        int secondRun = secondRand.nextInt (1);
+        if (secondRun == 1){
+        }
+        else{
+            Random rand = new Random ();
+            int random = rand.nextInt (sufList.size ());
+            magic mg = sufList.get(random);
+
+            Random stats = new Random ();
+            int statRand;
+            if (mg.mod1min.equals (mg.mod1max)){
+                statRand = Integer.parseInt (mg.mod1min);
+            }
+            else{
+                statRand = stats.nextInt (Integer.parseInt (mg.mod1min),Integer.parseInt (mg.mod1max));
+            }
+            firstLine += " " + mg.Name;
+            thirdLine += statRand + " " + mg.mod1code;
+            sufEmpty = false;
+        }
+
+        System.out.println (firstLine);
+        if (!sufEmpty){
+            System.out.println (secondLine);
+        }
+        if (!preEmpty){
+            System.out.println (thirdLine);
+        }
+
+
+        //sturdy helemet of the dune
+        //Armor % 50
+        //Lightning Damage 3
+        
+
+    }
+
     
             
     
     public static void main(String[] args) throws FileNotFoundException {
+        Scanner scan = new Scanner (System.in);
         System.out.println("This program kills monsters and generates loot!");
         fillMonster ();
         fillTreasure ();
         fillArmor ();
+        fillPrefix ();
+        fillSuffix ();
         //System.out.println (pickMonster ());
         //System.out.println (monstList.get (13).TreasureClass);
         // System.out.println (tresList.get (5).TreasureClass);
-        treasure tr = fetchTreasureClass();
+        // treasure tr = fetchTreasureClass();
         // System.out.println (tr.TreasureClass + " " + tr.Item1 + " " + tr.Item2 + " " + tr.Item3);
 
         // System.out.println (generateBaseItem ());
         // System.out.println (generateBaseItem());
 
-        System.out.println (generateBaseStats ());
+        // System.out.println (generateBaseStats ());
+        boolean running = true;
+        while (running){
+            generateAffix ();
+
+            
+            boolean valid = false;
+            while(!valid){
+                System.out.print ("Fight again [y/n]? ");
+                String answer = scan.next ();
+                if(answer.equals ("n") || answer.equals ("N") || answer.equals ("y") || answer.equals ("Y")){
+                    if (answer.equals ("n") || answer.equals ("N")){
+                        running = false;
+                    }
+                    valid = true;
+                } else {
+                    valid = false;
+                }
+            }
+        }
+        
     }
 }
