@@ -10,6 +10,7 @@ public class LootGenerator {
     private static final String DATA_SET = "data/large";
     private static ArrayList <monster>monstList = new ArrayList<monster>();
     private static ArrayList <treasure>tresList = new ArrayList<treasure>();
+    private static ArrayList <armor>armList = new ArrayList<armor>();
 
 
     public static class monster {
@@ -40,6 +41,32 @@ public class LootGenerator {
         }
         public treasure (){
         }
+    }
+
+    public static class armor {
+        private String armorName;
+        private String minac;
+        private String maxac;
+        public armor (String armorName, String minac, String maxac){
+            this.armorName = armorName;
+            this.minac = minac;
+            this.maxac = maxac;
+        }
+        public armor (){
+        }
+    }
+
+    public static void fillArmor () throws FileNotFoundException{
+        Scanner scan = new Scanner (new File (DATA_SET + "/armor.txt")).useDelimiter("\t");
+
+        while (scan.hasNext ()){
+            armor arm = new armor ();
+            arm.armorName = scan.next ().trim();
+            arm.minac = scan.next ().trim();
+            arm.maxac = scan.nextLine ().trim();  
+            armList.add (arm);
+        }
+        scan.close (); 
     }
 
     public static void fillMonster () throws FileNotFoundException{
@@ -78,14 +105,14 @@ public class LootGenerator {
         scan.close ();
     }
 
-    public static treasure fetchTreasureClass(String tres){
+    public static treasure fetchTreasureClass(){
         String tr = pickMonster().TreasureClass;
         // String tr = "Act 2 Miss A";
         for(int i = 0; i < tresList.size(); i++){
             // System.out.print (i);
             // System.out.println (tresList.get (i).TreasureClass + ": " + tr);
-            System.out.println (tr);
-            System.out.println (new treasure ().TreasureClass);
+            // System.out.println (tr);
+            // System.out.println (new treasure ().TreasureClass);
             if(tresList.get(i).TreasureClass.equals(tr)){
                 // System.out.println ("made it here");
                 return tresList.get(i);
@@ -95,36 +122,62 @@ public class LootGenerator {
 
 
     public static String generateBaseItem (){
-        treasure tr = fetchTreasureClass(pickMonster().TreasureClass);
-        String tempstring = "";
-        while(!tr.TreasureClass.equals(null)){  
-            Random rand = new Random ();
-            int random = 1 + rand.nextInt (3);
-            if(random == 1){
-                tempstring = tr.Item1;
-                tr = fetchTreasureClass(tr.Item1);
-            } else if(random == 2){
-                tempstring = tr.Item2;
-                tr = fetchTreasureClass(tr.Item2);
-            } else if(random == 3){
-                tempstring = tr.Item3;
-                tr = fetchTreasureClass(tr.Item3);
-            }
-        } return tempstring;
+        treasure tr = fetchTreasureClass();
+        return generateBaseItemHelper (tr);
     }
+
+    public static String generateBaseItemHelper (treasure tres){
+        Random rand = new Random ();
+        int random = 1 + rand.nextInt (3);
+        String it = "";
+        if(random == 1){
+            it = tres.Item1;
+        } else if(random == 2){
+            it = tres.Item2;
+        } else if(random == 3){
+            it = tres.Item3;
+        }
+        // System.out.println ("initial : " + tres.TreasureClass);
+        // System.out.println ("initial item: " + it);
+        for (int i = 0; i < tresList.size ();i++){
+            if (tresList.get(i).TreasureClass.equals(it)){
+                // System.out.println (tresList.get(i).TreasureClass + " : " + it);
+                // System.out.println (it.Item1);
+                // System.out.println ("count");
+                it = generateBaseItemHelper (tresList.get (i));
+            }
+        }
+        return it;
+    }
+
+    public static int generateBaseStats (){
+        String gitem = generateBaseItem();
+        System.out.println (gitem);
+        for(int i = 0; i < armList.size(); i++){
+            if(gitem.equals(armList.get(i).armorName)){
+                Random rand = new Random ();
+                return rand.nextInt (Integer.parseInt (armList.get(i).minac), (Integer.parseInt (armList.get(i).maxac)));
+            }
+        } return -1;
+    }
+
+    
             
     
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("This program kills monsters and generates loot!");
         fillMonster ();
         fillTreasure ();
+        fillArmor ();
         //System.out.println (pickMonster ());
         //System.out.println (monstList.get (13).TreasureClass);
         // System.out.println (tresList.get (5).TreasureClass);
-        treasure tr = fetchTreasureClass(pickMonster().TreasureClass);
+        treasure tr = fetchTreasureClass();
         // System.out.println (tr.TreasureClass + " " + tr.Item1 + " " + tr.Item2 + " " + tr.Item3);
 
         // System.out.println (generateBaseItem ());
-        System.out.println (generateBaseItem());
+        // System.out.println (generateBaseItem());
+
+        System.out.println (generateBaseStats ());
     }
 }
