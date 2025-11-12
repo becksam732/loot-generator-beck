@@ -15,7 +15,11 @@ public class LootGenerator {
     private static ArrayList <magic>sufList = new ArrayList<magic>();
 
 
-
+    /**
+     * Constructor magic
+     * 
+     * @param Strings Name, mod1code, mod1min, mod1max
+     */
     public static class magic {
         private String Name;
         private String mod1code;
@@ -32,6 +36,11 @@ public class LootGenerator {
         }
     }
 
+    /**
+     * Constructor monster
+     * 
+     * @param Strings Class, Type, Level, TreasureClass
+     */
     public static class monster {
         private String Class;
         private String Type;
@@ -47,6 +56,11 @@ public class LootGenerator {
         }
     }
 
+    /**
+     * Constructor Treasure
+     * 
+     * @param Strings TreasureClass, Item1, Item2, Item3
+     */
     public static class treasure {
         private String TreasureClass;
         private String Item1;
@@ -62,6 +76,12 @@ public class LootGenerator {
         }
     }
 
+    /**
+     * constructor armor
+     * 
+     * @param Strings armorName, minac, maxac
+     * 
+     */
     public static class armor {
         private String armorName;
         private String minac;
@@ -75,6 +95,12 @@ public class LootGenerator {
         }
     }
 
+    /**
+     * void method to fill the prefix arrayList from the prefix txt
+     * 
+     * 
+     * @throws FileNotFoundException
+     */
     public static void fillPrefix () throws FileNotFoundException{
         Scanner scan = new Scanner (new File (DATA_SET + "/MagicPrefix.txt")).useDelimiter("\t");
 
@@ -89,6 +115,10 @@ public class LootGenerator {
         scan.close (); 
     }
 
+    /**
+     * void method fillSuffix, fills the suffix arraylist from the suffix txt
+     * @throws FileNotFoundException
+     */
     public static void fillSuffix () throws FileNotFoundException{
         Scanner scan = new Scanner (new File (DATA_SET + "/MagicSuffix.txt")).useDelimiter("\t");
 
@@ -103,6 +133,10 @@ public class LootGenerator {
         scan.close (); 
     }
 
+    /**
+     * void method fills the armor arrayList from the armor.txt
+     * @throws FileNotFoundException
+     */
     public static void fillArmor () throws FileNotFoundException{
         Scanner scan = new Scanner (new File (DATA_SET + "/armor.txt")).useDelimiter("\t");
 
@@ -116,6 +150,10 @@ public class LootGenerator {
         scan.close (); 
     }
 
+    /**
+     * void method fillMonster, fills the monster arraylist from the monstats.txt
+     * @throws FileNotFoundException
+     */
     public static void fillMonster () throws FileNotFoundException{
         Scanner scan = new Scanner (new File (DATA_SET + "/monstats.txt")).useDelimiter("\t");
 
@@ -130,6 +168,10 @@ public class LootGenerator {
         scan.close (); 
     }
 
+    /**
+     * monster type pickMonster.
+     * @return a new monster type that is pulled randomly from the list at monstats.txt
+     */
     public static monster pickMonster (){
         Random rand = new Random ();
         int random = rand.nextInt (monstList.size ());
@@ -142,6 +184,10 @@ public class LootGenerator {
     }
 
 
+    /**
+     * void method fillTreasure, pulls from the treasureclass.txt to fill in the treasure arraylist
+     * @throws FileNotFoundException
+     */
     public static void fillTreasure () throws FileNotFoundException{
         Scanner scan = new Scanner (new File (DATA_SET + "/TreasureClassEx.txt")).useDelimiter("\t");
 
@@ -156,22 +202,23 @@ public class LootGenerator {
         scan.close ();
     }
 
+    /**
+     * fetchTreasureClass
+     * @return a treasure type, this treasure will be pulled from the monster selcted from pickMonster, and checked to make sure it is in the treasurelist.
+     */
     public static treasure fetchTreasureClass(){
         String tr = pickMonster().TreasureClass;
-        // String tr = "Act 2 Miss A";
         for(int i = 0; i < tresList.size(); i++){
-            // System.out.print (i);
-            // System.out.println (tresList.get (i).TreasureClass + ": " + tr);
-            // System.out.println (tr);
-            // System.out.println (new treasure ().TreasureClass);
             if(tresList.get(i).TreasureClass.equals(tr)){
-                // System.out.println ("made it here");
                 return tresList.get(i);
             }
         } return new treasure();
     }
 
-
+    /**
+     * generateBaseItem, recursevily obtains a string representing a base item dropped from a monster.
+     * @return a string item
+     */
     public static String generateBaseItem (){
         treasure tr = fetchTreasureClass();
         return generateBaseItemHelper (tr);
@@ -188,19 +235,18 @@ public class LootGenerator {
         } else if(random == 3){
             it = tres.Item3;
         }
-        // System.out.println ("initial : " + tres.TreasureClass);
-        // System.out.println ("initial item: " + it);
         for (int i = 0; i < tresList.size ();i++){
             if (tresList.get(i).TreasureClass.equals(it)){
-                // System.out.println (tresList.get(i).TreasureClass + " : " + it);
-                // System.out.println (it.Item1);
-                // System.out.println ("count");
                 it = generateBaseItemHelper (tresList.get (i));
             }
         }
         return it;
     }
 
+    /**
+     * generateBaseStats, randomly selects the stat of an item between a predetermined range of ints.
+     * @return an integer representeing the stat value of a item.
+     */
     public static int generateBaseStats (){
         String gitem = generateBaseItem();
         System.out.println (gitem);
@@ -212,6 +258,9 @@ public class LootGenerator {
         } return -1;
     }
 
+    /**
+     * randomly selects the prefix and affix that surrounds an item, and properly prints these out along with the item and its stat values.
+     */
     public static void generateAffix (){
         String firstLine = "";
         String secondLine = "";
@@ -291,16 +340,7 @@ public class LootGenerator {
         fillArmor ();
         fillPrefix ();
         fillSuffix ();
-        //System.out.println (pickMonster ());
-        //System.out.println (monstList.get (13).TreasureClass);
-        // System.out.println (tresList.get (5).TreasureClass);
-        // treasure tr = fetchTreasureClass();
-        // System.out.println (tr.TreasureClass + " " + tr.Item1 + " " + tr.Item2 + " " + tr.Item3);
-
-        // System.out.println (generateBaseItem ());
-        // System.out.println (generateBaseItem());
-
-        // System.out.println (generateBaseStats ());
+       
         boolean running = true;
         while (running){
             generateAffix ();

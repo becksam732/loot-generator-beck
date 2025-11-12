@@ -1,10 +1,10 @@
 # Project: Loot Generator
 
-Authors: (_TODO: fill in names here!_)
+Authors: (Aidan Michaelson, Sam Beck)
 
 ## Resources
 
-*   (_TODO: fill in resources here!_)
+*   (None, outside of the java arrayList class).
 *   ...
 *   ...
 
